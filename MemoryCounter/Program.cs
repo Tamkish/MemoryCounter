@@ -2,16 +2,10 @@
 
 namespace MemoryCounter
 {
-	class SpojovySeznam<T>
+	class SpojovySeznam<T> where T:IComparable
 	{
 		Uzel zacatek, konec;
 		public int Count { get; private set; }
-
-		/*public T this[int index]
-		{
-			moznost zapornych cisel, podobne jak v pythonu
-			bere bud od zacatku nebo od konce podle toho kde to je bliz
-		}*/
 
 
 		class Uzel
@@ -47,6 +41,22 @@ namespace MemoryCounter
 
 			Count++;
 		}
+		public void VlozSerazene(T vstup)
+		{
+			Uzel mensiNezVstup = zacatek;
+			for (int i = 0; i < Count; i++)
+			{
+				if (vstup.CompareTo(mensiNezVstup.data) <= 0) //pokud vstup je mensi nez momentalni index
+				{
+					//VlozNaPozici(i, vstup) //TODO =========================================================
+					//return
+				}
+				else
+				{
+
+				}
+			}
+		}
 
 		public void VypsatPrvky()
 		{
@@ -56,8 +66,9 @@ namespace MemoryCounter
 				Console.WriteLine(uzel.data);
 				uzel = uzel.dalsi;
 			}
-
 		}
+
+
 	}
 
 
