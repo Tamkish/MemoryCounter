@@ -4,8 +4,40 @@ namespace MemoryCounter
 {
 	class SpojovySeznam<T> where T:IComparable
 	{
+
+
 		Uzel zacatek, konec;
 		public int Count { get; private set; }
+
+
+		#region operators
+		public static bool operator <(Node node, T input)
+		{
+			return node.data.CompareTo(input) < 0;
+		}
+		public static bool operator >(Node node, T input)
+		{
+			return node.data.CompareTo(input) > 0;
+		}
+		public static bool operator <=(Node node, T input)
+		{
+			return node.data.CompareTo(input) <= 0;
+		}
+		public static bool operator >=(Node node, T input)
+		{
+			return node.data.CompareTo(input) >= 0;
+		}
+		public static bool operator ==(Node node, T input)
+		{
+			return node.data.CompareTo(input) == 0;
+		}
+		public static bool operator !=(Node node, T input)
+		{
+			return node.data.CompareTo(input) != 0;
+		}
+
+
+		#endregion
 
 
 		class Uzel
@@ -48,8 +80,7 @@ namespace MemoryCounter
 			{
 				if (vstup.CompareTo(mensiNezVstup.data) <= 0) //pokud vstup je mensi nez momentalni index
 				{
-					//VlozNaPozici(i, vstup) //TODO =========================================================
-					//return
+
 				}
 				else
 				{
