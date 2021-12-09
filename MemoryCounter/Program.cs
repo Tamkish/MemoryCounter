@@ -2,100 +2,151 @@
 
 namespace MemoryCounter
 {
-	class SpojovySeznam<T> where T:IComparable
+	class SpojovySeznam<T> where T : IComparable
 	{
-
-
-		Uzel zacatek, konec;
+		Node start, end;
 		public int Count { get; private set; }
 
 
-		#region operators
-		public static bool operator <(Node node, T input)
-		{
-			return node.data.CompareTo(input) < 0;
-		}
-		public static bool operator >(Node node, T input)
-		{
-			return node.data.CompareTo(input) > 0;
-		}
-		public static bool operator <=(Node node, T input)
-		{
-			return node.data.CompareTo(input) <= 0;
-		}
-		public static bool operator >=(Node node, T input)
-		{
-			return node.data.CompareTo(input) >= 0;
-		}
-		public static bool operator ==(Node node, T input)
-		{
-			return node.data.CompareTo(input) == 0;
-		}
-		public static bool operator !=(Node node, T input)
-		{
-			return node.data.CompareTo(input) != 0;
-		}
-
-
-		#endregion
-
-
-		class Uzel
+		class Node
 		{
 			public T data;
-			public Uzel dalsi, predchozi;
-		}
+			public Node next, prev;
 
-		public void VlozNaZacatek(T vstup)
-		{
-			Uzel novy = new Uzel();
-			novy.data = vstup;
-			if (zacatek != null)
-			{ 
-				zacatek.predchozi = novy;
-			novy.dalsi = zacatek;
-			}
-			zacatek = novy;
-
-			Count++;
-		}
-		public void VlozNaKonec(T vstup)
-		{
-			Uzel novy = new Uzel();
-			novy.data = vstup;
-			if (konec != null)
+			#region operators
+			public static bool operator <(Node node, T input)
 			{
-				konec.dalsi = novy;
-			novy.predchozi = konec;
-
+				return node.data.CompareTo(input) < 0;
 			}
-			konec = novy;
+			public static bool operator >(Node node, T input)
+			{
+				return node.data.CompareTo(input) > 0;
+			}
+			public static bool operator <=(Node node, T input)
+			{
+				return node.data.CompareTo(input) <= 0;
+			}
+			public static bool operator >=(Node node, T input)
+			{
+				return node.data.CompareTo(input) >= 0;
+			}
+			public static bool operator ==(Node node, T input)
+			{
+				return node.data.CompareTo(input) == 0;
+			}
+			public static bool operator !=(Node node, T input)
+			{
+				return node.data.CompareTo(input) != 0;
+			}
+
+
+			#endregion
+		}
+
+		public void AddStart(T input)
+		{
+			Node newnode = new Node();
+			newnode.data = input;
+			if (start != null)
+			{
+				start.prev = newnode;
+				newnode.next = start;
+			}
+			else
+			{
+				end = newnode;
+			}
+			start = newnode;
 
 			Count++;
 		}
-		public void VlozSerazene(T vstup)
+		public void AddEnd(T input)
 		{
-			Uzel mensiNezVstup = zacatek;
+			Node newnode = new Node();
+			newnode.data = input;
+			if (end != null)
+			{
+				end.next = newnode;
+				newnode.prev = end;
+
+			}
+			else
+			{
+				start = newnode;
+			}
+			end = newnode;
+
+			Count++;
+		}
+		public void Add(T input)
+		{
+			Node smaller = start;
 			for (int i = 0; i < Count; i++)
 			{
-				if (vstup.CompareTo(mensiNezVstup.data) <= 0) //pokud vstup je mensi nez momentalni index
+				if (smaller.next == null)
 				{
+					AddEnd(input);
+					return;
+				}
 
+				if (smaller.next <= input)
+				{
+					smaller = smaller.next;
 				}
 				else
 				{
-
+					Node newnode = new Node();
+					newnode.data = input;
+					smaller.next.prev = newnode;
+					newnode.next = smaller.next;
+					smaller.next = newnode;
+					newnode.prev = smaller;
+					return;
 				}
 			}
 		}
 
+		//		1) přidejte metodu, která vrátí index zadaného prvku
+		public int IndexOf(T input)
+		{
+			Node current = start;
+			for (int i = 0; i < Count; i++)
+			{
+				if (current == input)
+				{
+					return i;
+				}
+
+				if (current.next != null)
+				{
+					current = current.next;
+				}
+				
+			}
+			return -1;
+		}
+
+		//2) přidejte metodu pro zjištění počtu výskytů prvku T
+		//(seznam může být nesetříděný a prvky se stejnou hodnotou se mohou opakovat)
+
+		//3) přidejte metodu, která obrátí pořadí prvků
+
+
+		//4) přidejte mtodu pro odstranění všech prvků větších než vstupní parametr
+
+		//5) upravte třídu Spojový seznam tak, aby implementovala rozhraní IList<T>
+		//neboli umožňovala přístup k prvkům pomocí indexu zapsaného v[]
+
+		//6) přidejte metodu nebo operátor + pro spojení dvou seřazených seznamů tak,
+		//aby výsledek byl opět seřazený seznam
+
 		public void VypsatPrvky()
 		{
-			Uzel uzel = zacatek;
+			Node uzel = start;
 			for (int i = 0; i < Count; i++)
 			{
 				Console.WriteLine(uzel.data);
-				uzel = uzel.dalsi;
+				uzel = uzel.next;
 			}
 		}
 
@@ -108,9 +159,17 @@ namespace MemoryCounter
 		static void Main(string[] args)
 		{
 			SpojovySeznam<int> seznam = new SpojovySeznam<int>();
-			seznam.VlozNaZacatek(1);
-			seznam.VlozNaKonec(10);
-			seznam.VlozNaKonec(11);
+			//mel jsem problem s domaci verzi takze jsem ted nemel Add a z nejakeho duvodu mi ted nefunguje.
+			seznam.AddStart(1);
+			seznam.AddEnd(10);
+			seznam.AddEnd(11);
+			seznam.Add(4);
+			seznam.Add(6);
+			seznam.Add(7);
+			seznam.Add(2);
+			seznam.Add(6);
+			seznam.Add(9);
+			seznam.Add(0);
 
 			seznam.VypsatPrvky();
 		}
